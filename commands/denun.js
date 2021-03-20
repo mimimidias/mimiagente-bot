@@ -1,17 +1,17 @@
 module.exports = {
-	name: 'suges',
-	description: 'Adiciona uma sugestão',
+	name: 'denun',
+	description: 'Adiciona uma denúncia',
 	execute(message, args, db) {
 		const id_number = `${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}`;
 		console.log(id_number);
-		const ID = `SUG_${id_number}`;
+		const ID = `DEN_${id_number}`;
 		const user = message.author.id;
 		const body = args.join(' ');
 		const anon = 'False';
 		const date = new Date();
-		const type = 'SUGESTÃO';
+		const type = 'DENÚNCIA';
 
-		const write = db.prepare('INSERT INTO sugg VALUES(?, ?, ?, ?, ?)');
+		const write = db.prepare('INSERT INTO denun VALUES(?, ?, ?, ?, ?)');
 		write.run(ID, user, body, anon, date);
 
 		const embedmsg = {
