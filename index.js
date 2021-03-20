@@ -1,27 +1,38 @@
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
-const client = new Discord.Client();
+const fs = require('fs');
 
-client.once('ready', () =>{
-    console.log ('Ready!')
-})
+const bot = new Discord.Client();
+bot.commands = new Discord.Collection();
 
-client.on('message', message =>{
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-    if(message.content.startsWith(`${prefix}warnmimiagente `)){
-        var warn = message.content.substr(15)
-        message.channel.send(".warn" + warn)
-        console.log(message.content);
-    }
-})
+const {
+	prefix,
+	token,
+} = require('./config.json');
 
-client.on('message', message =>{
+bot.once('ready', () => {
+	console.log('Ready!');
+});
 
-    if(message.content.startsWith(`${prefix}banmimiagente `)){
-        var warn = message.content.substr(14)
-        message.channel.send(".ban" + warn)
-        console.log(message.content);
-    }
-})
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	bot.commands.set(command.name, command);
+}
 
-client.login(token);
+bot.on('message', message => {
+	if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+	const args = message.content.slice(prefix.length).trim().split(/ +/);
+	const command = args.shift().toLowerCase();
+
+	if (!bot.commands.has(command)) return;
+	try {
+		bot.commands.get(command).execute(message, args);
+	} catch(error) {
+		console.error(error);
+		message.reply('Erro inesperado.');
+	}
+});
+
+bot.login(token);
