@@ -27,12 +27,15 @@ for (const file of commandFiles) {
 bot.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
+	const compchann = bot.channels.cache.get('436187630921842690');
+	const guild = bot.guilds.cache.get('435220331016486927');
+	const answer = bot.users.cache;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
 
 	if (!bot.commands.has(command)) return;
 	try {
-		bot.commands.get(command).execute(message, args, db, bcrypt, saltRounds);
+		bot.commands.get(command).execute(message, args, db, bcrypt, saltRounds, compchann, answer, guild);
 	}
 	catch(error) {
 		console.error(error);

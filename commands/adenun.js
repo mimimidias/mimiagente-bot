@@ -1,7 +1,8 @@
 module.exports = {
 	name: 'adenun',
 	description: 'Adiciona uma denúncia anonima',
-	execute(message, args, db, bcrypt, saltRounds) {
+	execute(message, args, db, bcrypt, saltRounds, compchann) {
+		message.delete();
 		const id_number = `${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}`;
 		console.log(id_number);
 		const ID = `DEN_${id_number}`;
@@ -36,8 +37,7 @@ module.exports = {
 			],
 		};
 
-		const postchann = message.guild.channels.cache.find(c => c.id === '820388959032573963');
-		postchann.send({
+		compchann.send({
 			embed: embedmsg,
 		});
 	},
