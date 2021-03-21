@@ -1,23 +1,42 @@
+// ==============================================================================================================
+// 										   MODULO PARA DENUNCIA ANÔNIMA
+// ==============================================================================================================
+
 module.exports = {
 	name: 'adenun',
 	description: 'Adiciona uma denúncia anonima',
-	execute(message, args, db, bcrypt, saltRounds, compchann) {
+
+	// Função
+	execute(message, args, db, bcrypt, saltRounds, compchann, answer, guild) {
+
+		// Deleta comando enviado
 		message.delete();
+
+		// Cria ID da sugestão
 		const id_number = `${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}`;
-		console.log(id_number);
 		const ID = `DEN_${id_number}`;
+
+		// Pega ID do usuário
 		const user = message.author.id;
+
+		// Cria uma string a partir da array de argumentos
 		const body = args.join(' ');
+
+		// Cria variáveis locais
 		const anon = 'True';
 		const date = new Date();
 		const type = 'DENÚNCIA';
 
+		// Encripta usuário
 		bcrypt.hash(user, saltRounds, function(err, hash) {
-			// Store hash in your password DB.
+
+			// Escreve no banco de dados
 			const write = db.prepare('INSERT INTO denun VALUES(?, ?, ?, ?, ?)');
 			write.run(ID, hash, body, anon, date);
+
 		});
 
+		// Cria embed para enviar mensagem
 		const embedmsg = {
 			'title': `__**${type}**__`,
 			'color': 9178291,
@@ -37,6 +56,7 @@ module.exports = {
 			],
 		};
 
+		// Envia mensagem no canal designado no index.js
 		compchann.send({
 			embed: embedmsg,
 		});
