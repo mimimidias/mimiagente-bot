@@ -50,23 +50,23 @@ for (const file of commandFiles) {
 bot.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
+	// Separa o comando passado em argumentos em formato de uma array
+	const args = message.content.slice(prefix.length).trim().split(/ +/);
+
+	// Retira o primeiro objeto da array
+	const command = args.shift().toLowerCase();
+
 	// Ignora se comando não existir
 	if (!bot.commands.has(command)) return;
 
 	// Declara variáveis ao receber umcomando
 
 	// Pega um canal específico para enviar as respostas do comando
-	const compchann = bot.channels.cache.get('436187630921842690');
+	const compchann = bot.channels.cache.get('820388959032573963');
 
 	// Pega um servidor específico para verificar os usuários mais tarde
 	const guild = bot.guilds.cache.get('435220331016486927');
 	const answer = bot.users.cache;
-
-	// Separa o comando passado em argumentos em formato de uma array
-	const args = message.content.slice(prefix.length).trim().split(/ +/);
-
-	// Retira o primeiro objeto da array
-	const command = args.shift().toLowerCase();
 
 	// Catch de erros para não impedir o bot de rodar caso aconteça.
 	try {
