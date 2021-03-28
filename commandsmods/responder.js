@@ -27,6 +27,7 @@ module.exports = {
 			// Busca os dados
 			db.get(query, [id], (err, row) => {
 
+
 				// Checa se o usuário é anônimo ou não
 				if (row.anon === 'False') {
 
@@ -58,6 +59,7 @@ module.exports = {
 					answer.get(row.user).send({
 						embed: embedmsg,
 					});
+					message.reply('Sugestão ' + row.id + ' respondida!');
 				}
 
 				// Se for anônimo
@@ -103,6 +105,7 @@ module.exports = {
 								answer.get(members[i]).send({
 									embed: embedmsg,
 								});
+								message.reply('Sugestão ' + row.id + ' respondida!');
 							}
 						});
 					}
@@ -150,6 +153,7 @@ module.exports = {
 					answer.get(row.user).send({
 						embed: embedmsg,
 					});
+					message.reply('Crítica ' + row.id + ' respondida!');
 				}
 
 				// Se for anônimo
@@ -195,6 +199,7 @@ module.exports = {
 								answer.get(members[i]).send({
 									embed: embedmsg,
 								});
+								message.reply('Crítica ' + row.id + ' respondida!');
 							}
 						});
 					}
@@ -202,7 +207,7 @@ module.exports = {
 			});
 		}
 		// Pega primeiro argumento da array como ID da mensagem
-		else if (id.startsWith('DENUN')) {
+		else if (id.startsWith('DEN')) {
 
 			// Cria a query string
 			const query = 'SELECT * FROM denun WHERE id = ?';
@@ -241,6 +246,7 @@ module.exports = {
 					answer.get(row.user).send({
 						embed: embedmsg,
 					});
+					message.reply('Denúncia ' + row.id + ' respondida!');
 				}
 
 				// Se for anônimo
@@ -286,6 +292,7 @@ module.exports = {
 								answer.get(members[i]).send({
 									embed: embedmsg,
 								});
+								message.reply('Denúncia ' + row.id + ' respondida!');
 							}
 						});
 					}

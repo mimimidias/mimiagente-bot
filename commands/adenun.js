@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // ==============================================================================================================
 // 										   MODULO PARA DENUNCIA ANÔNIMA
 // ==============================================================================================================
@@ -12,53 +13,83 @@ module.exports = {
 		// Deleta comando enviado
 		message.delete();
 
-		// Cria ID da sugestão
-		const id_number = `${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}`;
-		const ID = `DEN_${id_number}`;
+		// Cria query para checar todas as sugestões
+		const query = 'SELECT id FROM denun UNION SELECT id FROM issued WHERE id LIKE \'DEN%\'';
 
-		// Pega ID do usuário
-		const user = message.author.id;
+		// eslint-disable-next-line no-var
+		var ID;
 
-		// Cria uma string a partir da array de argumentos
-		const body = args.join(' ');
+		// Busca os dados
+		db.all(query, (err, row) => {
 
-		// Cria variáveis locais
-		const anon = 'True';
-		const date = new Date();
-		const type = 'DENÚNCIA';
+			// Checa se ID é única
+			if (row === undefined || row.length === 0) {
+				// Cria ID da sugestão
+				const id_number = `${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}`;
 
-		// Encripta usuário
-		bcrypt.hash(user, saltRounds, function(err, hash) {
+				// eslint-disable-next-line no-var
+				ID = `DEN_${id_number}`;
+			}
+			else {
+				// Cria ID da sugestão
+				let id_number = `${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}`;
 
-			// Escreve no banco de dados
-			const write = db.prepare('INSERT INTO denun VALUES(?, ?, ?, ?, ?)');
-			write.run(ID, hash, body, anon, date);
+				// eslint-disable-next-line no-var
+				ID = `DEN_${id_number}`;
+				while ((row.some(e => e.id == ID)) == true) {
 
-		});
+					// Cria ID da sugestão
+					id_number = `${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}${Math.floor(Math.random() * (9 - 1)) + 1}`;
 
-		// Cria embed para enviar mensagem
-		const embedmsg = {
-			'title': `__**${type}**__`,
-			'color': 9178291,
-			'timestamp': `${date}`,
-			'fields': [{
-				'name': '**ID**',
-				'value': `${ID}`,
-			},
-			{
-				'name': 'Mensagem',
-				'value': `${body}`,
-			},
-			{
-				'name': '**Usuário**',
-				'value': 'Anônimo',
-			},
-			],
-		};
+					// eslint-disable-next-line no-var
+					ID = `DEN_${id_number}`;
+				}
+			}
 
-		// Envia mensagem no canal designado no index.js
-		compchann.send({
-			embed: embedmsg,
+			// Pega ID do usuário
+			const user = message.author.id;
+
+			// Cria uma string a partir da array de argumentos
+			const body = args.join(' ');
+
+			// Cria variáveis locais
+			const anon = 'True';
+			const date = new Date();
+			const type = 'DENÚNCIA';
+
+			// Encripta usuário
+			bcrypt.hash(user, saltRounds, function(err, hash) {
+
+				// Escreve no banco de dados
+				const write = db.prepare('INSERT INTO issued VALUES(?, ?, ?, ?, ?)');
+				write.run(ID, hash, body, anon, date);
+
+			});
+
+			// Cria embed para enviar mensagem
+			const embedmsg = {
+				'title': `__**${type}**__`,
+				'color': 9178291,
+				'timestamp': `${date}`,
+				'fields': [{
+					'name': '**ID**',
+					'value': `${ID}`,
+				},
+				{
+					'name': 'Mensagem',
+					'value': `${body}`,
+				},
+				{
+					'name': '**Usuário**',
+					'value': 'Anônimo',
+				},
+				],
+			};
+
+			// Envia mensagem no canal designado no index.js
+			compchann.send({
+				embed: embedmsg,
+			});
 		});
 	},
 
